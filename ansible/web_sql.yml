@@ -1,0 +1,35 @@
+---
+- name: install apache2 - task
+  hosts: dev
+  become: true
+  vars_files: var/web_sql.yml
+  tasks: 
+  - name: install mysql+ apache2
+    apt:
+      name:
+      - "{{ web_pkg }}"
+      - "{{ mysql_pkg }}"
+      state: present
+  - name: Copy index.html file
+    copy:
+      content: "Welcome to dev server"
+      dst: /var/www/html/index.html
+  - name: start and enable apache service
+    service:
+      name: "{{ web_service }}"
+      state: started
+      enabled: yes
+  - name: start and enble mysql service
+    service:
+      name: "{{ mysql_service }}"
+      state: started
+      enabled: yes
+- name: http check
+  hosts: localhost
+  become: false
+  tasks:
+  - name: http check
+    uri:
+      url: http://172.31.10.149
+      return_content: yes
+      status_code: 200

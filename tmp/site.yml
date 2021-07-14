@@ -1,0 +1,19 @@
+- name: install apache2
+  hosts: dev
+  become: true
+  tasks: 
+          - name: install apache2
+            apt: 
+              name: apache2 
+              update_cache: yes
+              state: latest
+
+          - name: Copy index.html file
+            copy:
+              src: /tmp/index.html
+              dst: /var/www/html/index.html
+
+          - name: apache2
+            service:
+               state: started
+               enabled: yes
