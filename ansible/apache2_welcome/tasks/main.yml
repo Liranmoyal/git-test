@@ -1,0 +1,17 @@
+- name: Install Apache2
+  apt:
+    name: apache2
+    state: latest
+    update_cache: yes
+
+- name: enable apache2 service
+  service:
+          name: apache2
+          state: started
+          enabled: true
+- name: template usage
+  template:
+          src: temp.txt.j2
+          dest: /var/www/html/index.html
+  notify:
+    - Restart Apache2        

@@ -1,0 +1,39 @@
+---
+- name: Create Users
+  hosts: all
+  vars_files:
+     - var/users_list.yml
+     - vault/users_pass.yml
+  become: true
+  tasks:
+          - name: Ensure devops group exist
+            group:
+                    name: devops
+                    state: present
+            when: "'dev' in group_names"
+
+          - name: Create users developers
+            user:
+                    name: "{{ item.username }}"
+                    group: devops
+                    password: "{{ pw_dev | password_hash('sha512') }}"
+            when:
+               - "'dev' in group_names"
+               - ('developer' in item.job)
+            loop: "{{ users }}"
+
+          - name: Ensure manger group exist
+            group:
+                    name: manager
+                    state: present
+            when: "'mgr' in group_names"
+
+          - name: Create users developers
+            user:
+                    name: "{{ item.username }}"
+                    group: manager
+                    password: "{{ pw_mgr | password_hash('sha512') }}"
+            when:
+               - "'mgr' in group_names"
+               - ('manager' in item.job)
+            loop: "{{ users }}"

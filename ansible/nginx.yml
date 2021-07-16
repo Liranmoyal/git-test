@@ -1,0 +1,6 @@
+---
+- name: nginx install
+  hosts: prod
+  become: true
+  roles: 
+   - nginx_install
